@@ -3,7 +3,8 @@ import { ApiError } from '../utils/ApiError.js'
 import { ApiResponse } from '../utils/ApiResponse.js'
 import bcrypt from 'bcrypt';
 import { User } from '../models/user.model.js'
-import { generateAccessToken, generateRefreshToken } from '../services/auth.service.js';
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../services/auth.service.js';
+
 
 // register 
 
@@ -65,7 +66,41 @@ const login = asyncHandler(async (req, res) => {
 
 })
 
+const logout = asyncHandler(async(req, res)=>{
+    // do i need to fetch refreshToken from anywhere only after that user can log OUT??
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+    })
+    return res.status(200).json(new ApiResponse(200, {}, "Logged ut successFully"))
+})
+
+const refreshAccessToken = asyncHandler(async(req, res)=>{
+    const { refreshToken } = req.cookies;
+    if(!refreshToken) throw new ApiError(400, "please login again");
+
+    const decoded = verifyRefreshToken(refreshToken);
+    if(!decoded?._id) throw new ApiError(401, "Invalid refresh token");
+
+    const user = await User.findById(decoded._id);
+    if(!user) throw new ApiError(400, "User not found");
+
+    const accessToken = generateAccessToken(user);
+
+    return res.status(200).json(new ApiResponse(200, {accessToken}, "Refreshed access Token SuccessFully"))
+})
+
+const getProfile = asyncHandler(async(req, res)=>{
+    // litrally this 
+    const user = req.user;
+
+    if(!user) throw new ApiError(400, "User not found");
 
 
+    return res.status(200).json(new ApiResponse(200, user, "User fetched successFully"))
 
-export { register, login };
+
+})
+
+export { register, login, logout, refreshAccessToken, getProfile };
