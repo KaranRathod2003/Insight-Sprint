@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-
+import bcrypt from 'bcrypt';
 const userSchema = new Schema(
     {
         name : {
@@ -14,8 +14,6 @@ const userSchema = new Schema(
         }, 
         passwordHash : {
             type : String,
-            min : 6,
-            max : 10,
             required : true
         }, 
 
@@ -23,6 +21,9 @@ const userSchema = new Schema(
     {timestamps : true});
     
 userSchema.methods.isPasswordCorrect = async function (password) {
+    if (!password || !this.passwordHash) {
+        throw new Error('Password and hash are required for comparison');
+    }
     return await bcrypt.compare(password, this.passwordHash);
 };
 

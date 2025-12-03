@@ -18,6 +18,7 @@ const register = asyncHandler(async (req, res) => {
 
     const exitsUser = await User.findOne({ email });
     if (exitsUser) throw new ApiError(401, "User already exits");
+    
 
     const user = await User.create({
         name,
@@ -31,8 +32,8 @@ const register = asyncHandler(async (req, res) => {
     // Set refresh token cookie - i dont know 
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "strict",
+        secure: false,
+        sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     })
 
@@ -44,8 +45,10 @@ const login = asyncHandler(async (req, res) => {
 
     if (!email || !password) throw new ApiError(400, "All fields are required");
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+passwordHash")
     if (!user) throw new ApiError(400, "User not found");
+    console.log('User found:', user.email);
+    console.log('Password hash exists:', !!user.passwordHash);
     const validPassword = await user.isPasswordCorrect(password)
     if (!validPassword) throw new ApiError(400, "Incorrect password");
     const accessToken = generateAccessToken(user);
@@ -56,8 +59,8 @@ const login = asyncHandler(async (req, res) => {
     // set cookie i dont know
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "strict",
+        secure: false,
+        sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     })
 
@@ -70,18 +73,25 @@ const logout = asyncHandler(async(req, res)=>{
     // do i need to fetch refreshToken from anywhere only after that user can log OUT??
     res.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: true,
-        sameSite: "strict",
+        secure: false,      // ← Changed from true to match login
+        sameSite: "lax",
     })
-    return res.status(200).json(new ApiResponse(200, {}, "Logged ut successFully"))
+    return res.status(200).json(new ApiResponse(200, {}, "Logged out successFully"))
 })
 
 const refreshAccessToken = asyncHandler(async(req, res)=>{
     const { refreshToken } = req.cookies;
     if(!refreshToken) throw new ApiError(400, "please login again");
 
-    const decoded = verifyRefreshToken(refreshToken);
-    if(!decoded?._id) throw new ApiError(401, "Invalid refresh token");
+    let decoded;
+     try {
+        decoded = verifyRefreshToken(refreshToken);
+    } catch (error) {
+        throw new ApiError(401, "Invalid or expired refresh token");
+    }
+     if(!decoded?._id) {
+        throw new ApiError(401, "Invalid refresh token payload");
+    }
 
     const user = await User.findById(decoded._id);
     if(!user) throw new ApiError(400, "User not found");

@@ -7,7 +7,7 @@ const generateAccessToken = (user) =>{
 
 // generate refresh token
 const generateRefreshToken = (user) =>{
-    return jwt.sign({_id : user._id}, process.env.REFRESH_TOKEN_SECRET), {expiresIn : "7d"}
+    return jwt.sign({_id : user._id}, process.env.REFRESH_TOKEN_SECRET, {expiresIn : "7d"})
 }
 
 // send token to cookie 
@@ -22,7 +22,11 @@ const sendRefreshToken = (res, token)=>{
 
 // verify token 
 const verifyRefreshToken = (token) =>{
-    return jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+    try {
+        return jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+    } catch (error) {
+        throw new Error('Invalid or expired refresh token');
+    }
 }
 
 
