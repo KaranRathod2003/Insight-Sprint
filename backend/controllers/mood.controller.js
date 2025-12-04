@@ -31,10 +31,11 @@ const getWeeklyMood  = asyncHandler(async(req, res)=>{
 
     const last7DaysDate = last7Days.toISOString().split("T")[0];
 
-    const moods = Mood.find({
+    const moods = await Mood.find({
         user : req.user._id,
-        date : {$gte: last7DaysDate}
+        date : { $gte: last7DaysDate }
     })
+    // if(!moods)
 
     return res.status(200).json(new ApiResponse(200, moods, "Weekly mood fetch successfully"));
 })
