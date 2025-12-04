@@ -40,6 +40,10 @@ import moodRoutes from "./routes/mood.routes.js"
 
 app.use("/api/mood", moodRoutes)
 
+import statsRoutes from "./routes/stats.routes.js"
+
+app.use("/api/stats", statsRoutes);
+
 
 
 export default app;
