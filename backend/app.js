@@ -27,5 +27,9 @@ import authRoutes from "./routes/auth.routes.js";
 app.use("/api/auth", authRoutes);
 
 
+import taskRoutes from "./routes/task.routes.js"
+
+app.use("/api/tasks", taskRoutes);
+
 
 export default app;
