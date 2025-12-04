@@ -44,6 +44,8 @@ import statsRoutes from "./routes/stats.routes.js"
 
 app.use("/api/stats", statsRoutes);
 
+import aiRoutes from "./routes/ai.routes.js"
 
+app.use("/api/ai", aiRoutes);
 
 export default app;
