@@ -32,4 +32,12 @@ import taskRoutes from "./routes/task.routes.js"
 app.use("/api/tasks", taskRoutes);
 
 
+import habitRoutes from "./routes/habit.routes.js";
+
+app.use("/api/habits", habitRoutes);
+
+
+
+
+
 export default app;
