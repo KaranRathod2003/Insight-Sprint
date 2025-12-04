@@ -36,7 +36,9 @@ import habitRoutes from "./routes/habit.routes.js";
 
 app.use("/api/habits", habitRoutes);
 
+import moodRoutes from "./routes/mood.routes.js"
 
+app.use("/api/mood", moodRoutes)
 
 
 
