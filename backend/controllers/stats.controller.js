@@ -54,3 +54,5 @@ const getTodayStats = asyncHandler(async(req, res)=>{
       mood: moodStats }, 
       "Today's stats fetched successfully"))
 })
+
+export { getTodayStats };
