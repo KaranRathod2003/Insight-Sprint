@@ -1,11 +1,9 @@
 import express from 'express';
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
 import { errorHandler } from './middlewares/error.middleware.js';
 
 
-dotenv.config();
 const app = express();
 
 
@@ -44,6 +42,8 @@ import statsRoutes from "./routes/stats.routes.js"
 
 app.use("/api/stats", statsRoutes);
 
+import aiRoutes from "./routes/ai.routes.js"
 
+app.use("/api/ai", aiRoutes);
 
 export default app;
