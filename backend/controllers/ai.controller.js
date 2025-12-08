@@ -5,12 +5,12 @@ import { Habit } from "../models/habit.model.js";
 import { Mood } from "../models/mood.model.js";
 import { GoogleGenAI } from "@google/genai";
 
-const apiKey = process.env.GEMINI_API_KEY;
-const ai = new GoogleGenAI({ apiKey : `AIzaSyBaB3HxEIMuFC41mngCAmx3OsieMwpNRB4`});
+
 
 const generateSummary = asyncHandler(async (req, res) => {
   const { notes } = req.body;
   const today = new Date().toISOString().split("T")[0];
+  console.log(`${process.env.GEMINI_API_KEY} this is api key`);
 
 
 
@@ -77,6 +77,8 @@ Write:
 
 Keep tone positive, friendly, and motivating.
 `;
+
+const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
 
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
