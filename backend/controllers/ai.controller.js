@@ -10,7 +10,6 @@ import { GoogleGenAI } from "@google/genai";
 const generateSummary = asyncHandler(async (req, res) => {
   const { notes } = req.body;
   const today = new Date().toISOString().split("T")[0];
-  console.log(`${process.env.GEMINI_API_KEY} this is api key`);
 
 
 
