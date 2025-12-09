@@ -1,4 +1,4 @@
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from '../pages/Login.jsx';
 import Register from '../pages/Register.jsx';
 import Dashboard from '../pages/Dashboard.jsx';
@@ -7,6 +7,7 @@ import Tasks from '../pages/Tasks.jsx';
 import Habits from '../pages/Habits.jsx';
 import Summary from '../pages/Summary.jsx';
 import ProtectedRoute from '../components/ProtectedRoute.jsx';
+import Layout from '../components/Layout.jsx';
 
 const AppRouter = () => {
     return (
@@ -20,16 +21,9 @@ const AppRouter = () => {
                     path="/"
                     element={
                         <ProtectedRoute>
-                            <Dashboard />
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
-                    path="/mood"
-                    element={
-                        <ProtectedRoute>
-                            <Mood />
+                            <Layout>
+                                <Dashboard />
+                            </Layout>
                         </ProtectedRoute>
                     }
                 />
@@ -38,7 +32,9 @@ const AppRouter = () => {
                     path="/tasks"
                     element={
                         <ProtectedRoute>
-                            <Tasks />
+                            <Layout>
+                                <Tasks />
+                            </Layout>
                         </ProtectedRoute>
                     }
                 />
@@ -47,7 +43,20 @@ const AppRouter = () => {
                     path="/habits"
                     element={
                         <ProtectedRoute>
-                            <Habits />
+                            <Layout>
+                                <Habits />
+                            </Layout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/mood"
+                    element={
+                        <ProtectedRoute>
+                            <Layout>
+                                <Mood />
+                            </Layout>
                         </ProtectedRoute>
                     }
                 />
@@ -56,10 +65,13 @@ const AppRouter = () => {
                     path="/summary"
                     element={
                         <ProtectedRoute>
-                            <Summary />
+                            <Layout>
+                                <Summary />
+                            </Layout>
                         </ProtectedRoute>
                     }
                 />
+
 
             </Routes>
         </BrowserRouter>
