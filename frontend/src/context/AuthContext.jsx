@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { registerAuthHandlers } from "../api/axiosInstance";
+
 
 const AuthContext = createContext();
 
@@ -7,6 +9,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [accessToken, setAccessToken] = useState(null);
+    const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -33,6 +36,14 @@ export const AuthProvider = ({ children }) => {
     }, [accessToken]); // add dependency
 
 
+    useEffect(() => {
+    registerAuthHandlers({
+        setRefreshing,
+        updateToken,
+    });
+}, []);
+
+
     const login = (userData, token) => {
         setUser(userData);
         setAccessToken(token);
@@ -54,7 +65,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, accessToken, login, logout, updateToken,loading }}>
+        <AuthContext.Provider value={{ user, accessToken, login, logout, updateToken,loading,     refreshing,   // 👈 add this
+    setRefreshing  }}>
             {children}
         </AuthContext.Provider>
     );
