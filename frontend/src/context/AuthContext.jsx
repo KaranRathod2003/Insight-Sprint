@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("accessToken");
         const userData = localStorage.getItem("user");
 
         if (token && userData) {
@@ -20,22 +20,41 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
+    useEffect(() => {
+        const syncToken = () => {
+            const newToken = localStorage.getItem("accessToken");
+            if (newToken !== accessToken) {
+                setAccessToken(newToken);
+            }
+        };
+
+        window.addEventListener("storage", syncToken);
+        return () => window.removeEventListener("storage", syncToken);
+    }, [accessToken]); // add dependency
+
+
     const login = (userData, token) => {
         setUser(userData);
         setAccessToken(token);
-        localStorage.setItem("token", token);
+        localStorage.setItem("accessToken", token);
         localStorage.setItem("user", JSON.stringify(userData));
     };
+
+    const updateToken = (token) => {
+    setAccessToken(token);
+    localStorage.setItem("accessToken", token);
+};
+
 
     const logout = () => {
         setUser(null);
         setAccessToken(null);
-        localStorage.removeItem("token");
+        localStorage.removeItem("accessToken");
         localStorage.removeItem("user");
     };
 
     return (
-        <AuthContext.Provider value={{ user, accessToken, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, accessToken, login, logout, updateToken,loading }}>
             {children}
         </AuthContext.Provider>
     );
