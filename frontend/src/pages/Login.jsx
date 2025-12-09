@@ -21,6 +21,8 @@ const Login = () => {
       const res = await api.post("/auth/login", form);
 
       login(res.data.data.user, res.data.data.accessToken);
+      localStorage.setItem("accessToken", res.data.data.accessToken);
+
 
       setLoading(false);
       window.location.href = "/";

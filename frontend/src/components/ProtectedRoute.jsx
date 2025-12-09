@@ -5,8 +5,8 @@ const ProtectedRoute = ({ children }) => {
     const { accessToken, loading } = useAuth();
 
     if (loading) return <div>Loading...</div>; // important fix
-
-    return accessToken ? children : <Navigate to="/login" replace />;
+    const token = accessToken || localStorage.getItem("accessToken");
+    return token ? children : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;
