@@ -1,13 +1,38 @@
 import { useEffect, useState } from "react";
-import { api } from "../api/axiosInstance.js";
-import { useAuth } from "../context/AuthContext.jsx";
+import { api } from "../api/axiosInstance";
+import { useAuth } from "../context/AuthContext";
+
+// MUI Components
+import {
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Stack,
+  Chip,
+  LinearProgress,
+  Tooltip,
+  Fade,
+  Skeleton,
+} from "@mui/material";
+
+// MUI Icons
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import MoodIcon from "@mui/icons-material/Mood";
+import InsightsIcon from "@mui/icons-material/Insights";
+import AddIcon from "@mui/icons-material/Add";
+import TrackChangesIcon from "@mui/icons-material/TrackChanges";
+import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch today's stats
+  // Fetch stats
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -19,59 +44,311 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
-
     fetchStats();
   }, []);
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  // Calculate progress percentages
+  const taskProgress = stats?.tasks?.total > 0 ? (stats.tasks.completed / stats.tasks.total) * 100 : 0;
+  const habitProgress = stats?.habits?.total > 0 ? (stats.habits.completed / stats.habits.total) * 100 : 0;
+
+  // Mood color mapping
+const getMoodColor = (mood = "") => {
+  const moodMap = {
+    happy: "success",
+    sad: "error",
+    neutral: "warning",
+    angry: "error",
+    tired: "info",
+    sick: "secondary"
+  };
+  return moodMap[mood.toLowerCase()] || "default";
+};
+
+
+  if (loading) {
+    return (
+      <Box sx={{ minHeight: "100vh", p: 4, bgcolor: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+        <Skeleton variant="text" width="40%" height={60} sx={{ mb: 2 }} />
+        <Skeleton variant="text" width="60%" height={30} sx={{ mb: 4 }} />
+        <Grid container spacing={3}>
+          {[1, 2, 3].map((i) => (
+            <Grid item xs={12} md={4} key={i}>
+              <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 3 }} />
+            </Grid>
+          ))}
+        </Grid>
+        <Skeleton variant="text" width="30%" height={40} sx={{ mt: 6, mb: 2 }} />
+        <Grid container spacing={2}>
+          {[1, 2, 3, 4].map((i) => (
+            <Grid item xs={6} md={3} key={i}>
+              <Skeleton variant="rectangular" height={60} sx={{ borderRadius: 2 }} />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    );
+  }
 
   return (
-    <div className="min-h-screen p-6 bg-gray-100">
+    <Fade in={!loading} timeout={1000}>
+      <Box
+        sx={{
+          minHeight: "100vh",
+          p: 4,
+          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          backgroundAttachment: "fixed",
+        }}
+      >
+        {/* Greeting */}
+        <Typography
+          variant="h3"
+          fontWeight={800}
+          sx={{
+            color: "white",
+            textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+            mb: 1,
+          }}
+        >
+          Hello, {user?.name} 👋
+        </Typography>
+        <Typography
+          variant="h6"
+          sx={{
+            color: "rgba(255,255,255,0.8)",
+            mb: 4,
+            fontWeight: 500,
+          }}
+        >
+          Here's your progress for today!
+        </Typography>
 
-      {/* Greeting Section */}
-      <h1 className="text-3xl font-bold">Hello, {user?.name} 👋</h1>
-      <p className="text-gray-600 mb-6">Here’s your progress for today!</p>
+        {/* Stats Cards */}
+        <Grid container spacing={3}>
+          {/* TASKS */}
+          <Grid item xs={12} md={4}>
+            <Card
+              sx={{
+                borderRadius: 4,
+                boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+                backdropFilter: "blur(10px)",
+                background: "rgba(255,255,255,0.9)",
+                transition: "transform 0.3s ease-in-out",
+                "&:hover": { transform: "translateY(-5px)" },
+              }}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+                  <AssignmentIcon color="primary" fontSize="large" />
+                  <Typography variant="h6" fontWeight={700} color="primary">
+                    Tasks
+                  </Typography>
+                </Stack>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  Total: <Chip label={stats?.tasks?.total} color="primary" size="small" />
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 1, color: "green" }}>
+                  Completed: <Chip label={stats?.tasks?.completed} color="success" size="small" />
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 2, color: "red" }}>
+                  Pending: <Chip label={stats?.tasks?.pending} color="error" size="small" />
+                </Typography>
+                <Tooltip title={`Completion: ${taskProgress.toFixed(0)}%`} arrow>
+                  <LinearProgress
+                    variant="determinate"
+                    value={taskProgress}
+                    sx={{
+                      height: 8,
+                      borderRadius: 4,
+                      bgcolor: "rgba(0,0,0,0.1)",
+                      "& .MuiLinearProgress-bar": { borderRadius: 4 },
+                    }}
+                  />
+                </Tooltip>
+              </CardContent>
+            </Card>
+          </Grid>
 
-      {/* Stats Grid */}
-      <div className="grid md:grid-cols-3 gap-4 mt-4">
-        <div className="bg-white p-5 rounded-xl shadow">
-          <h2 className="text-xl font-semibold">Tasks</h2>
-          <p>Total: {stats?.tasks?.total}</p>
-          <p>Completed: {stats?.tasks?.completed}</p>
-          <p>Pending: {stats?.tasks?.pending}</p>
-        </div>
+          {/* HABITS */}
+          <Grid item xs={12} md={4}>
+            <Card
+              sx={{
+                borderRadius: 4,
+                boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+                backdropFilter: "blur(10px)",
+                background: "rgba(255,255,255,0.9)",
+                transition: "transform 0.3s ease-in-out",
+                "&:hover": { transform: "translateY(-5px)" },
+              }}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+                  <CheckCircleIcon color="success" fontSize="large" />
+                  <Typography variant="h6" fontWeight={700} color="success.main">
+                    Habits
+                  </Typography>
+                </Stack>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  Total: <Chip label={stats?.habits?.total} color="primary" size="small" />
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 1, color: "green" }}>
+                  Completed: <Chip label={stats?.habits?.completed} color="success" size="small" />
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 2, color: "red" }}>
+                  Pending: <Chip label={stats?.habits?.pending} color="error" size="small" />
+                </Typography>
+                <Tooltip title={`Completion: ${habitProgress.toFixed(0)}%`} arrow>
+                  <LinearProgress
+                    variant="determinate"
+                    value={habitProgress}
+                    sx={{
+                      height: 8,
+                      borderRadius: 4,
+                      bgcolor: "rgba(0,0,0,0.1)",
+                      "& .MuiLinearProgress-bar": { borderRadius: 4 },
+                    }}
+                  />
+                </Tooltip>
+              </CardContent>
+            </Card>
+          </Grid>
 
-        <div className="bg-white p-5 rounded-xl shadow">
-          <h2 className="text-xl font-semibold">Habits</h2>
-          <p>Total: {stats?.habits?.total}</p>
-          <p>Completed: {stats?.habits?.completed}</p>
-          <p>Pending: {stats?.habits?.pending}</p>
-        </div>
+          {/* MOOD */}
+          <Grid item xs={12} md={4}>
+            <Card
+              sx={{
+                borderRadius: 4,
+                boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+                backdropFilter: "blur(10px)",
+                background: "rgba(255,255,255,0.9)",
+                transition: "transform 0.3s ease-in-out",
+                "&:hover": { transform: "translateY(-5px)" },
+              }}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+                  <SentimentSatisfiedAltIcon color={getMoodColor(stats?.mood?.mood)} fontSize="large" />
+                  <Typography variant="h6" fontWeight={700} color={`${getMoodColor(stats?.mood?.mood)}.main`}>
+                    Mood
+                  </Typography>
+                </Stack>
+                <Typography variant="h4" fontWeight={800} sx={{ mb: 1 }}>
+                  {stats?.mood?.mood || "No mood logged"}
+                </Typography>
+                {stats?.mood?.note && (
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontStyle: "italic" }}>
+                    Note: {stats.mood.note}
+                  </Typography>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
 
-        <div className="bg-white p-5 rounded-xl shadow">
-          <h2 className="text-xl font-semibold">Mood</h2>
-          <p className="text-2xl">
-            {stats?.mood?.mood || "No mood logged"}
-          </p>
+        {/* Quick Action Buttons */}
+        <Typography
+          variant="h5"
+          sx={{
+            mt: 6,
+            mb: 3,
+            color: "white",
+            fontWeight: 700,
+            textAlign: "center",
+          }}
+        >
+          Quick Actions
+        </Typography>
 
-          {stats?.mood?.note && (
-            <p className="text-gray-500 text-sm mt-1">
-              Note: {stats.mood.note}
-            </p>
-          )}
+        <Grid container spacing={2}>
+          <Grid item xs={6} md={3}>
+            <Tooltip title="Add a new task" arrow>
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                size="large"
+                href="/tasks"
+                sx={{
+                  py: 2,
+                  borderRadius: 3,
+                  boxShadow: 3,
+                  transition: "all 0.3s ease",
+                  "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
+                }}
+                startIcon={<AddIcon />}
+              >
+                Add Task
+              </Button>
+            </Tooltip>
+          </Grid>
 
-        </div>
-      </div>
+          <Grid item xs={6} md={3}>
+            <Tooltip title="Track a new habit" arrow>
+              <Button
+                fullWidth
+                variant="contained"
+                color="success"
+                size="large"
+                href="/habits"
+                sx={{
+                  py: 2,
+                  borderRadius: 3,
+                  boxShadow: 3,
+                  transition: "all 0.3s ease",
+                  "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
+                }}
+                startIcon={<TrackChangesIcon />}
+              >
+                Add Habit
+              </Button>
+            </Tooltip>
+          </Grid>
 
-      {/* Quick Action Buttons */}
-      <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-        <a href="/tasks" className="p-4 bg-blue-500 text-white rounded-xl text-center font-medium">Add Task</a>
-        <a href="/habits" className="p-4 bg-green-500 text-white rounded-xl text-center font-medium">Add Habit</a>
-        <a href="/mood" className="p-4 bg-yellow-500 text-white rounded-xl text-center font-medium">Log Mood</a>
-        <a href="/summary" className="p-4 bg-purple-500 text-white rounded-xl text-center font-medium">AI Summary</a>
-      </div>
+          <Grid item xs={6} md={3}>
+            <Tooltip title="Log your current mood" arrow>
+              <Button
+                fullWidth
+                variant="contained"
+                color="warning"
+                size="large"
+                href="/mood"
+                sx={{
+                  py: 2,
+                  borderRadius: 3,
+                  boxShadow: 3,
+                  transition: "all 0.3s ease",
+                  "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
+                }}
+                startIcon={<MoodIcon />}
+              >
+                Log Mood
+              </Button>
+            </Tooltip>
+          </Grid>
 
-    </div>
+          <Grid item xs={6} md={3}>
+            <Tooltip title="Get AI-powered insights" arrow>
+              <Button
+                fullWidth
+                variant="contained"
+                color="secondary"
+                size="large"
+                href="/summary"
+                sx={{
+                  py: 2,
+                  borderRadius: 3,
+                  boxShadow: 3,
+                  transition: "all 0.3s ease",
+                  "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
+                }}
+                startIcon={<InsightsIcon />}
+              >
+                AI Summary
+              </Button>
+            </Tooltip>
+          </Grid>
+        </Grid>
+      </Box>
+    </Fade>
   );
 };
 
