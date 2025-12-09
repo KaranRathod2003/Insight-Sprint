@@ -6,11 +6,11 @@ const router = Router();
 
 router.route('/').post(verifyJWT, createTask);
 
-router.route('/tasks/today').get(verifyJWT, getTodayTasks);
+router.route('/today').get(verifyJWT, getTodayTasks);
 
-router.route('/tasks/:id').patch(verifyJWT, toggleTask);
+router.route('/:id').patch(verifyJWT, toggleTask);
 
-router.route('/tasks/:id').delete(verifyJWT, deleteTask);
+router.route('/:id').delete(verifyJWT, deleteTask);
 
 
 

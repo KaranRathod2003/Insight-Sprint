@@ -58,7 +58,9 @@ You are an AI productivity coach. Create a motivating daily summary based on the
 
 Here is the data:
 
-Completed Tasks: ${summaryData.tasks.completed.join(", ") || "None"}
+Completed Tasks: ${summaryData.tasks.completed
+  .map(t => `${t.title} - ${t.description}`)
+  .join(", ") || "None"}
 Pending Tasks: ${summaryData.tasks.pending.join(", ") || "None"}
 
 Completed Habits: ${summaryData.habits.completed.join(", ") || "None"}

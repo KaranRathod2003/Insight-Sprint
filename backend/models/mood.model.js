@@ -10,7 +10,7 @@ const moodSchema = new Schema({
     }, 
     mood : {
         type : String,
-        enum : ['happy', 'sad', 'neutral', 'angry', 'tired', 'sick'], // do i need to specify or validate only this moods
+        enum :  ["Happy", "Neutral", "Sad", "Excited"], // do i need to specify or validate only this moods
         required : true
     }, 
     note : {

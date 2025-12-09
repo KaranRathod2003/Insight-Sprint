@@ -1,12 +1,15 @@
+import { useState } from "react";
+import AppRouter from "./router/AppRouter.jsx";
+import RefreshingOverlay from "./components/RefreshingOverlay";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-   <>
-   <h1>Hello world !!</h1>
-   </>
-  )
+    <>
+      <RefreshingOverlay />
+      <AppRouter />
+    </>
+  );
 }
 
-export default App
+export default App;
+
