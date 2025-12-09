@@ -27,6 +27,9 @@ const getTodayStats = asyncHandler(async (req, res) => {
     const completedTasks = tasks.filter(t => t.isCompleted).length;
     const completedHabits = habits.filter(h => h.isCompleted).length;
 
+    const pendingTasks = totalTasks - completedTasks;
+    const pendingHabits = totalHabits - completedHabits;
+
     const calcPercentage = (completed, total) => {
         if (total === 0) return 0;
         return Math.round((completed / total) * 100);
@@ -35,12 +38,14 @@ const getTodayStats = asyncHandler(async (req, res) => {
     const taskStats = {
         total: totalTasks,
         completed: completedTasks,
+        pending: pendingTasks,
         percentage: calcPercentage(completedTasks, totalTasks),
     };
 
     const habitStats = {
         total: totalHabits,
         completed: completedHabits,
+        pending: pendingHabits,
         percentage: calcPercentage(completedHabits, totalHabits),
     };
 
