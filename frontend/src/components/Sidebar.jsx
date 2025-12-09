@@ -52,6 +52,7 @@ const Sidebar = () => {
     { text: "Habits", icon: <TrackChangesIcon />, path: "/habits" },
     { text: "Mood", icon: <MoodIcon />, path: "/mood" },
     { text: "AI Summary", icon: <InsightsIcon />, path: "/summary" },
+    { text: "Weekly Mood", icon: <MoodIcon />, path: "/mood-weekly" },
   ];
 
   const drawerContent = (

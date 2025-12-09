@@ -8,6 +8,7 @@ import Habits from '../pages/Habits.jsx';
 import Summary from '../pages/Summary.jsx';
 import ProtectedRoute from '../components/ProtectedRoute.jsx';
 import Layout from '../components/Layout.jsx';
+import WeeklyMood from '../components/WeeklyMood.jsx';
 
 const AppRouter = () => {
     return (
@@ -60,6 +61,15 @@ const AppRouter = () => {
                         </ProtectedRoute>
                     }
                 />
+                <Route path="/mood-weekly" element={
+                    <ProtectedRoute>
+                        <Layout>
+                            <WeeklyMood />
+                        </Layout>
+                        
+                    </ProtectedRoute>
+                } />
+
 
                 <Route
                     path="/summary"
