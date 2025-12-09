@@ -72,13 +72,13 @@
 ## 🎥 Demo
 
 ### Dashboard Overview
-![Dashboard Screenshot](https://via.placeholder.com/800x450/6366f1/ffffff?text=Dashboard+Screenshot)
+![Dashboard Screenshot](/assests/Screenshot%202025-12-09%20173317.png)
 
 ### Task Management
-![Task Management](https://via.placeholder.com/800x450/10b981/ffffff?text=Task+Management)
+![Task Management](/assests/Screenshot%202025-12-09%20173333.png)
 
 ### Habit Tracking
-![Habit Tracking](https://via.placeholder.com/800x450/f59e0b/ffffff?text=Habit+Tracking)
+![Habit Tracking](/assests/Screenshot%202025-12-09%20173343.png)
 
 > 🔗 **Live Demo**: [Coming Soon](#)
 
@@ -480,8 +480,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 **Karan Rathod**
 
 - GitHub: [@KaranRathod2003](https://github.com/KaranRathod2003)
-- LinkedIn: [Your LinkedIn Profile](#)
-- Email: your.email@example.com
+- LinkedIn: [Your LinkedIn Profile](https://www.linkedin.com/in/karanrathod2003/)
+- Email: kr04391@gmail.com
 
 ---
 
