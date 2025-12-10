@@ -14,16 +14,27 @@ import {
   Tooltip,
 } from "@mui/material";
 
+
+
+import Modal from "@mui/material/Modal";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+
 
 import { api } from "../api/axiosInstance";
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [editTask, setEditTask] = useState(null);
+
+
+
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -78,6 +89,36 @@ const Tasks = () => {
       console.log(err);
     }
   };
+
+  // Open Edit Modal
+  const handleEditClick = (task) => {
+    setEditTask(task);
+    setEditOpen(true);
+  };
+
+  // Update Task API
+  const updateTask = async () => {
+    if (!editTask.title.trim()) return;
+
+    try {
+      const res = await api.put(`/tasks/${editTask._id}`, {
+        title: editTask.title,
+        description: editTask.description,
+      });
+
+      // Update UI instantly
+      setTasks(tasks.map((t) => (t._id === editTask._id ? res.data.data : t)));
+
+      setEditOpen(false);
+    } catch (err) {
+      console.log("Task update error:", err);
+    }
+  };
+
+
+
+
+
 
   return (
     <Fade in timeout={500}>
@@ -199,6 +240,16 @@ const Tasks = () => {
                           <DeleteIcon />
                         </IconButton>
                       </Tooltip>
+
+                      <Tooltip title="Edit Task">
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleEditClick(task)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </Tooltip>
+
                     </Stack>
                   </CardContent>
                 </Card>
@@ -206,6 +257,60 @@ const Tasks = () => {
             ))}
           </Grid>
         )}
+
+        {/* EDIT TASK MODAL */}
+        <Modal open={editOpen} onClose={() => setEditOpen(false)}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 400,
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 4,
+              borderRadius: 3,
+            }}
+          >
+            <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
+              Edit Task
+            </Typography>
+
+            <TextField
+              label="Task Title"
+              fullWidth
+              sx={{ mb: 2 }}
+              value={editTask?.title || ""}
+              onChange={(e) =>
+                setEditTask({ ...editTask, title: e.target.value })
+              }
+            />
+
+            <TextField
+              label="Description"
+              fullWidth
+              multiline
+              minRows={3}
+              sx={{ mb: 3 }}
+              value={editTask?.description || ""}
+              onChange={(e) =>
+                setEditTask({ ...editTask, description: e.target.value })
+              }
+            />
+
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ py: 1.3, borderRadius: 2 }}
+              onClick={updateTask}
+            >
+              Save Changes
+            </Button>
+          </Box>
+        </Modal>
+
       </Box>
     </Fade>
   );
