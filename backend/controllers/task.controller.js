@@ -62,4 +62,20 @@ const deleteTask = asyncHandler(async(req, res)=>{
     return res.status(200).json(new ApiResponse(200, {}, "Task deleted Successfully"));
 })
 
-export { createTask, getTodayTasks, toggleTask, deleteTask }
+const updateTask = asyncHandler(async(req, res)=>{
+    const taskId = req.params.id;
+    const {title, description} = req.body;
+
+    if(!title || title.length < 3) throw new ApiError(400, "Title is required or title atleast 3 letters");
+
+    const task = await Task.findById(taskId);
+    if(!task) throw new ApiError(404, "Task not found");
+
+    task.title = title;
+    task.description = description;
+
+    await task.save();
+    return res.status(200).json(new ApiResponse(200, task, "Task updated successfully"));
+})
+
+export { createTask, getTodayTasks, toggleTask, deleteTask, updateTask }
