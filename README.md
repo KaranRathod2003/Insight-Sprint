@@ -80,6 +80,12 @@
 ### Habit Tracking
 ![Habit Tracking](/assests/Screenshot%202025-12-09%20173343.png)
 
+### Mood Logging
+![Mood Logging](/assests/Screenshot%202025-12-09%20173355.png)
+
+### Ai Summary
+![Ai Summary](/assests/Screenshot%202025-12-09%20173634.png)
+
 > 🔗 **Live Demo**: [Coming Soon](#)
 
 ---
