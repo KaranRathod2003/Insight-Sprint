@@ -1,31 +1,38 @@
-import mongoose, {Schema} from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const habitSchema = new Schema({
-    user : {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'User'
-    }, 
-    title : {
-        type : String,
-        required : true,
-        min : 3
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
-    isCompleted : {
-        type : Boolean,
-        default : false
-    }, 
-    icon : {
-        type : String, //optional
+    title: {
+        type: String,
+        required: true,
+        min: 3
     },
-    date :{
-        type : String,
-        required : true
+    isCompleted: {
+        type: Boolean,
+        default: false
     },
-    streakCount : {
-        type : Number,
-        default : 0
+    icon: {
+        type: String, //optional
+    },
+    date: {
+        type: String,
+        required: true
+    },
+    streakCount: {
+        type: Number,
+        default: 0
+    },
+    lastCompletedDate: {
+        type: String, // track previous completion day
+    },
+    longestStreak: {
+        type: Number,
+        default: 0
     }
-}, {timestamps : true});
+}, { timestamps: true });
 
 
 const Habit = mongoose.model("Habit", habitSchema);
