@@ -43,8 +43,44 @@ const toggleHabit = asyncHandler(async(req, res)=>{
 
     const habit = await Habit.findById(habitId);
     if(!habit) throw new ApiError(404, "Habit not found")
+    const today = new Date().toISOString().split("T")[0];
 
     habit.isCompleted = !habit.isCompleted;
+    
+    if (habit.isCompleted) {
+
+        // FIRST TIME EVER COMPLETED
+        if (!habit.lastCompletedDate) {
+            habit.streakCount = 1;
+            habit.longestStreak = 1;
+            habit.lastCompletedDate = today;
+        } else {
+            const last = new Date(habit.lastCompletedDate);
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            const lastStr = last.toISOString().split("T")[0];
+            const yestStr = yesterday.toISOString().split("T")[0];
+
+            if (lastStr === yestStr) {
+                // Continue streak
+                habit.streakCount += 1;
+            } else if (lastStr === today) {
+                // Already completed today → do nothing
+            } else {
+                // Missed a day → reset streak
+                habit.streakCount = 1;
+            }
+
+            // Update longest streak
+            if (habit.streakCount > habit.longestStreak) {
+                habit.longestStreak = habit.streakCount;
+            }
+
+            habit.lastCompletedDate = today;
+        }
+
+    }
 
     await habit.save();
 

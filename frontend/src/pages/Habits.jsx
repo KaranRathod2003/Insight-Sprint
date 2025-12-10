@@ -18,6 +18,8 @@ import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import WhatshotIcon from "@mui/icons-material/Whatshot"; // 🔥 streak icon
+import MilitaryTechIcon from "@mui/icons-material/MilitaryTech"; // 🏆 longest streak
 
 import { api } from "../api/axiosInstance";
 
@@ -29,12 +31,10 @@ const Habits = () => {
     title: "",
   });
 
-  // Load habits on mount
   useEffect(() => {
     fetchHabits();
   }, []);
 
-  // GET today habits
   const fetchHabits = async () => {
     try {
       const res = await api.get("/habits/today");
@@ -46,7 +46,6 @@ const Habits = () => {
     }
   };
 
-  // ADD habit
   const addHabit = async () => {
     if (!form.title.trim()) return;
 
@@ -59,22 +58,19 @@ const Habits = () => {
     }
   };
 
-  // COMPLETE habit
   const completeHabit = async (id) => {
     try {
-      await api.patch(`/habits/${id}`, { isCompleted: true });
+      const res = await api.patch(`/habits/${id}`);
 
-      setHabits(
-        habits.map((h) =>
-          h._id === id ? { ...h, isCompleted: true } : h
-        )
-      );
+      // backend returns updated habit including streak
+      const updatedHabit = res.data.data;
+
+      setHabits(habits.map(h => (h._id === id ? updatedHabit : h)));
     } catch (err) {
       console.log(err);
     }
   };
 
-  // DELETE habit
   const deleteHabit = async (id) => {
     try {
       await api.delete(`/habits/${id}`);
@@ -88,7 +84,7 @@ const Habits = () => {
     <Fade in timeout={500}>
       <Box sx={{ p: 4 }}>
         <Typography variant="h4" fontWeight={800} sx={{ mb: 3 }}>
-          Habit Tracker 🔁
+          Habit Tracker 🔥
         </Typography>
 
         {/* ADD HABIT FORM */}
@@ -158,6 +154,7 @@ const Habits = () => {
                   }}
                 >
                   <CardContent>
+                    {/* Title Row */}
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <TrackChangesIcon color="success" />
                       <Typography variant="h6" fontWeight={700}>
@@ -171,6 +168,29 @@ const Habits = () => {
                       color={habit.isCompleted ? "success" : "warning"}
                       sx={{ mt: 2 }}
                     />
+
+                    {/* 🔥 STREAK INFO */}
+                    <Stack spacing={1} sx={{ mt: 2 }}>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <WhatshotIcon color="error" />
+                        <Typography fontWeight={600}>
+                          Streak: {habit.streakCount || 0} days
+                        </Typography>
+                      </Stack>
+
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <MilitaryTechIcon color="primary" />
+                        <Typography fontWeight={600}>
+                          Longest: {habit.longestStreak || 0} days
+                        </Typography>
+                      </Stack>
+
+                      {habit.lastCompletedDate && (
+                        <Typography sx={{ color: "gray", mt: 1 }}>
+                          Last Completed: {habit.lastCompletedDate}
+                        </Typography>
+                      )}
+                    </Stack>
 
                     {/* ACTION BUTTONS */}
                     <Stack direction="row" spacing={1} sx={{ mt: 2 }}>

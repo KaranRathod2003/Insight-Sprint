@@ -23,7 +23,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const drawerWidth = 240;
+export const drawerWidth = 240;
 
 const Sidebar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
