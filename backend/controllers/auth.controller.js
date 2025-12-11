@@ -59,8 +59,8 @@ const login = asyncHandler(async (req, res) => {
     // set cookie i dont know
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: true,
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     })
 
@@ -73,8 +73,8 @@ const logout = asyncHandler(async(req, res)=>{
     // do i need to fetch refreshToken from anywhere only after that user can log OUT??
     res.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: false,      // ← Changed from true to match login
-        sameSite: "lax",
+        secure: true,      // ← Changed from true to match login
+        sameSite: "none",
     })
     return res.status(200).json(new ApiResponse(200, {}, "Logged out successFully"))
 })
